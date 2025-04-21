@@ -73,6 +73,13 @@ export default function Home() {
             >
               Feedback
             </Link>
+            <Link
+              href="/map"
+              className="text-sm font-medium te xt-muted-foreground transition-colors hover:text-foreground"
+            >
+              Maps
+            </Link>
+
           </nav>
           <div className="hidden md:flex items-center gap-4">
             <ThemeToggle />
@@ -132,6 +139,7 @@ export default function Home() {
                       Learn more
                     </Button>
                   </Link>
+                  
                 </div>
               </div>
               <div className="flex items-center justify-center">

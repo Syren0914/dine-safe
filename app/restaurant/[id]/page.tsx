@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -10,10 +10,14 @@ import {
   Phone,
   Globe,
   Star,
+  Calendar,
   ChevronRight,
   Share2,
   Bookmark,
   BookmarkCheck,
+  ThumbsUp,
+  ThumbsDown,
+  Info,
   Menu,
   X,
   MapIcon,
@@ -24,21 +28,9 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { useAuth } from "@/components/auth/auth-provider"
+import { AuthModal } from "@/components/auth/auth-modal"
 import { ThemeToggle } from "@/components/theme-toggle"
-import dynamic from "next/dynamic"
-
-// Use dynamic import with no SSR for the LeafletMap component
-const LeafletMap = dynamic(() => import("@/components/map/leaflet-map"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex items-center justify-center w-full h-[200px] bg-muted/30 rounded-lg border">
-      <div className="flex flex-col items-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-500 border-t-transparent"></div>
-        <p className="mt-2 text-sm text-muted-foreground">Loading map...</p>
-      </div>
-    </div>
-  ),
-})
+import  LeafletMap  from "@/components/map/leaflet-map"
 
 // Mock data for a restaurant
 const restaurantData = {
@@ -171,40 +163,9 @@ export default function RestaurantPage({ params }: { params: { id: string } }) {
   const [authView, setAuthView] = useState<"login" | "register">("login")
   const [activePhotoIndex, setActivePhotoIndex] = useState(0)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [showMap, setShowMap] = useState(false)
 
   // Get restaurant data (in a real app, this would fetch from an API)
   const restaurant = restaurantData
-
-  // Format restaurant for map view
-  const restaurantForMap = {
-    id: restaurant.id,
-    name: restaurant.name,
-    cuisine: restaurant.cuisine,
-    address: restaurant.address,
-    neighborhood: "Downtown",
-    city: "Blacksburg",
-    state: "VA",
-    zipCode: "24060",
-    phone: restaurant.phone,
-    website: restaurant.website,
-    priceRange: 3 as const,
-    healthScore: restaurant.healthScore.current,
-    ratings: restaurant.ratings,
-    features: ["Outdoor Seating", "Vegetarian Options"],
-    image: "/placeholder.svg?height=200&width=300",
-    latitude: restaurant.latitude,
-    longitude: restaurant.longitude,
-  }
-
-  // Delay showing the map to ensure it's properly initialized
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowMap(true)
-    }, 500)
-    
-    return () => clearTimeout(timer)
-  }, [])
 
   // Handle save restaurant
   const handleSaveRestaurant = () => {
@@ -253,6 +214,27 @@ export default function RestaurantPage({ params }: { params: { id: string } }) {
       default:
         return "bg-red-100 text-red-700"
     }
+  }
+
+  // Format restaurant for map view
+  const restaurantForMap = {
+    id: restaurant.id,
+    name: restaurant.name,
+    cuisine: restaurant.cuisine,
+    address: restaurant.address,
+    neighborhood: "Downtown",
+    city: "Blacksburg",
+    state: "VA",
+    zipCode: "24060",
+    phone: restaurant.phone,
+    website: restaurant.website,
+    priceRange: 3 as const,
+    healthScore: restaurant.healthScore.current,
+    ratings: restaurant.ratings,
+    features: ["Outdoor Seating", "Vegetarian Options"],
+    image: "/placeholder.svg?height=200&width=300",
+    latitude: restaurant.latitude,
+    longitude: restaurant.longitude,
   }
 
   return (
@@ -625,16 +607,13 @@ export default function RestaurantPage({ params }: { params: { id: string } }) {
                     <div className="mt-6 rounded-lg border p-4">
                       <h3 className="font-medium mb-2">Location</h3>
                       <div className="aspect-video overflow-hidden rounded-md">
-                        {/* Static map image as fallback */}
-                        <div className="relative w-full h-full">
-                          <Image 
-                            src={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+14b8a6(${restaurant.longitude},${restaurant.latitude})/${restaurant.longitude},${restaurant.latitude},15,0/300x200?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`}
-                            alt="Restaurant location map"
-                            width={300}
-                            height={200}
-                            className="w-full h-full object-cover rounded-md"
-                          />
-                        </div>
+                        <LeafletMap
+                          restaurants={[restaurantForMap]}
+                          initialZoom={15}
+                          showControls={false}
+                          height="200px"
+                          singleRestaurant={true}
+                        />
                       </div>
                       <Button
                         variant="link"
@@ -700,5 +679,402 @@ export default function RestaurantPage({ params }: { params: { id: string } }) {
                               </div>
                             )}
 
+                            {index > 0 && (
+                              <Button variant="link" className="mt-2 h-auto p-0 text-teal-500">
+                                View violations
+                                <ChevronRight className="ml-1 h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-\
+                    <div>
+                      <h2 className="text-xl font-bold">All Violations</h2>
+                      <p className="mt-2 text-muted-foreground">
+                        Complete list of health code violations found during inspections.
+                      </p>
+
+                      <div className="mt-6 space-y-4">
+                        {restaurant.violations.map((violation) => (
+                          <div key={violation.id} className="rounded-lg border p-4">
+                            <div className="flex items-start gap-3">
+                              <Badge variant="outline" className={getSeverityColor(violation.severity)}>
+                                {violation.severity}
+                              </Badge>
+                              <div>
+                                <div className="font-medium">{violation.description}</div>
+                                <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Calendar className="h-4 w-4" />
+                                  <span>{new Date(violation.date).toLocaleDateString()}</span>
+                                  {violation.corrected && (
+                                    <Badge variant="outline" className="bg-green-50 text-green-600">
+                                      Corrected
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="rounded-lg border p-4">
+                      <h3 className="font-medium">Understanding Health Scores</h3>
+                      <div className="mt-4 space-y-4">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-green-100 text-xs font-bold text-green-700">
+                              A
+                            </div>
+                            <div className="font-medium">90-100 points</div>
+                          </div>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            Excellent. Very few or no critical violations.
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-yellow-100 text-xs font-bold text-yellow-700">
+                              B
+                            </div>
+                            <div className="font-medium">80-89 points</div>
+                          </div>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            Good. Some violations that need correction.
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-orange-100 text-xs font-bold text-orange-700">
+                              C
+                            </div>
+                            <div className="font-medium">70-79 points</div>
+                          </div>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            Acceptable. Multiple violations that require follow-up.
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-red-100 text-xs font-bold text-red-700">
+                              F
+                            </div>
+                            <div className="font-medium">Below 70 points</div>
+                          </div>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            Poor. Significant issues that pose health risks.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 rounded-lg border p-4">
+                      <h3 className="font-medium">Violation Severity Levels</h3>
+                      <div className="mt-4 space-y-4">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="bg-red-50 text-red-500">
+                              high
+                            </Badge>
+                            <div className="font-medium">Critical Violation</div>
+                          </div>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            Direct impact on food safety and public health. Requires immediate correction.
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="bg-orange-50 text-orange-500">
+                              medium
+                            </Badge>
+                            <div className="font-medium">Major Violation</div>
+                          </div>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            Significant concern that could affect food safety. Requires timely correction.
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="bg-yellow-50 text-yellow-500">
+                              low
+                            </Badge>
+                            <div className="font-medium">Minor Violation</div>
+                          </div>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            Less serious issues that should be addressed but pose lower risk.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 rounded-lg border p-4 bg-teal-50">
+                      <div className="flex items-start gap-3">
+                        <Info className="h-5 w-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <h3 className="font-medium text-teal-700">About Health Inspections</h3>
+                          <p className="mt-2 text-sm text-teal-600">
+                            Health inspections are conducted regularly by local health departments to ensure restaurants
+                            comply with food safety regulations. Inspections are typically unannounced and evaluate food
+                            handling practices, employee hygiene, and facility cleanliness.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Reviews Tab */}
+              <TabsContent value="reviews" className="pt-6">
+                <div className="grid gap-8 md:grid-cols-[2fr_1fr]">
+                  <div>
+                    <div className="mb-8">
+                      <h2 className="text-xl font-bold">Customer Reviews</h2>
+                      <p className="mt-2 text-muted-foreground">
+                        Read what customers are saying about their dining experiences at {restaurant.name}.
+                      </p>
+
+                      <div className="mt-6 space-y-6">
+                        {restaurant.reviews.map((review) => (
+                          <div key={review.id} className="rounded-lg border p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="font-medium">{review.author}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {new Date(review.date).toLocaleDateString()}
+                              </div>
+                            </div>
+
+                            <div className="mt-2 flex">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star
+                                  key={star}
+                                  className={`h-4 w-4 ${
+                                    star <= review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+
+                            <p className="mt-3 text-sm">{review.text}</p>
+
+                            <div className="mt-4 flex items-center gap-4">
+                              <div className="text-sm text-muted-foreground">Was this review helpful?</div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 gap-1"
+                                onClick={() => handleReviewFeedback(review.id, true)}
+                              >
+                                <ThumbsUp className="h-3.5 w-3.5" />
+                                <span>{review.helpful}</span>
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 gap-1"
+                                onClick={() => handleReviewFeedback(review.id, false)}
+                              >
+                                <ThumbsDown className="h-3.5 w-3.5" />
+                                <span>{review.unhelpful}</span>
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-6">
+                        <Button className="bg-teal-500 hover:bg-teal-600">Write a Review</Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="rounded-lg border p-4">
+                      <h3 className="font-medium">Rating Summary</h3>
+                      <div className="mt-4 flex items-center gap-4">
+                        <div className="text-4xl font-bold">{restaurant.ratings.overall}</div>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                className={`h-5 w-5 ${
+                                  star <= Math.round(restaurant.ratings.overall)
+                                    ? "fill-yellow-400 text-yellow-400"
+                                    : "text-muted"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            Based on {restaurant.ratings.count} reviews
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 space-y-3">
+                        <div>
+                          <div className="flex items-center justify-between text-sm">
+                            <div>5 stars</div>
+                            <div className="w-full max-w-[200px] px-2">
+                              <Progress value={70} className="h-2" />
+                            </div>
+                            <div>70%</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex items-center justify-between text-sm">
+                            <div>4 stars</div>
+                            <div className="w-full max-w-[200px] px-2">
+                              <Progress value={20} className="h-2" />
+                            </div>
+                            <div>20%</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex items-center justify-between text-sm">
+                            <div>3 stars</div>
+                            <div className="w-full max-w-[200px] px-2">
+                              <Progress value={5} className="h-2" />
+                            </div>
+                            <div>5%</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex items-center justify-between text-sm">
+                            <div>2 stars</div>
+                            <div className="w-full max-w-[200px] px-2">
+                              <Progress value={3} className="h-2" />
+                            </div>
+                            <div>3%</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex items-center justify-between text-sm">
+                            <div>1 star</div>
+                            <div className="w-full max-w-[200px] px-2">
+                              <Progress value={2} className="h-2" />
+                            </div>
+                            <div>2%</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 rounded-lg border p-4">
+                      <h3 className="font-medium">Category Ratings</h3>
+                      <div className="mt-4 grid gap-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 text-sm">Food</div>
+                          <Progress value={restaurant.ratings.food * 20} className="h-2" />
+                          <div className="w-8 text-right text-sm">{restaurant.ratings.food}</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 text-sm">Service</div>
+                          <Progress value={restaurant.ratings.service * 20} className="h-2" />
+                          <div className="w-8 text-right text-sm">{restaurant.ratings.service}</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 text-sm">Ambiance</div>
+                          <Progress value={restaurant.ratings.ambiance * 20} className="h-2" />
+                          <div className="w-8 text-right text-sm">{restaurant.ratings.ambiance}</div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 text-sm">Value</div>
+                          <Progress value={restaurant.ratings.value * 20} className="h-2" />
+                          <div className="w-8 text-right text-sm">{restaurant.ratings.value}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Map Tab */}
+              <TabsContent value="map" className="pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-xl font-bold">Restaurant Location</h2>
+                    <p className="mt-2 text-muted-foreground">
+                      {restaurant.name} is located at {restaurant.address}. View the map below for directions.
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg border overflow-hidden">
+                    <LeafletMap
+                      restaurants={[restaurantForMap]}
+                      initialZoom={16}
+                      height="500px"
+                      singleRestaurant={true}
+                    />
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        window.open(
+                          `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(restaurant.address)}`,
+                          "_blank",
+                        )
+                      }
+                      className="flex items-center gap-2"
+                    >
+                      <MapPin className="h-4 w-4" />
+                      Get Directions
+                    </Button>
+
+                    <Button variant="outline" onClick={() => router.push("/map")} className="flex items-center gap-2">
+                      <MapIcon className="h-4 w-4" />
+                      View All Restaurants
+                    </Button>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </section>
+      </main>
+
+      <footer className="w-full border-t bg-background py-6 md:py-8">
+        <div className="container flex flex-col items-center justify-center gap-4 px-4 md:flex-row md:justify-between md:px-6">
+          <div className="flex items-center gap-2 font-semibold">
+            <div className="h-6 w-6 rounded-md bg-teal-500 flex items-center justify-center text-white text-xs">DS</div>
+            <span>DineSafe</span>
+          </div>
+          <p className="text-center text-sm text-muted-foreground md:text-left">
+            © 2023 DineSafe. All rights reserved.
+          </p>
+          <div className="flex gap-4">
+            <Link
+              href="#"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="#"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Terms
+            </Link>
+            <Link
+              href="#"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Contact
+            </Link>
+          </div>
+        </div>
+      </footer>
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultView={authView} />
+    </div>
+  )
+}

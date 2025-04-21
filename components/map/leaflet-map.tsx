@@ -1,5 +1,6 @@
 "use client"
 
+import { useId } from "react"
 import { useState, useEffect, useRef } from "react"
 import { useTheme } from "next-themes"
 import { useRouter } from "next/navigation"
@@ -48,7 +49,8 @@ function LeafletMap({
   const [isMapReady, setIsMapReady] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [fallbackToStatic, setFallbackToStatic] = useState(false)
-  const mapId = `map-${Math.random().toString(36).substring(2, 9)}`
+  const mapId = useId()
+
 
   // Function to safely load script
   const loadScript = (src: string): Promise<void> => {
