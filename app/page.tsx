@@ -10,6 +10,8 @@ import { UserAccountNav } from "@/components/auth/user-account-nav"
 import { SearchBar } from "@/components/search/search-bar"
 import { useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
+import Image from "next/image"
+import Navbar from "./navbar/page"
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -48,63 +50,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2 font-semibold">
-            <div className="h-8 w-8 rounded-md bg-teal-500 flex items-center justify-center text-white">DS</div>
-            <span>DineSafe</span>
-          </div>
-          <nav className="hidden md:flex gap-6">
-            <Link
-              href="#features"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Features
-            </Link>
-            <Link
-              href="#about"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              About
-            </Link>
-            <Link
-              href="#feedback"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Feedback
-            </Link>
-            <Link
-              href="/map"
-              className="text-sm font-medium te xt-muted-foreground transition-colors hover:text-foreground"
-            >
-              Maps
-            </Link>
-
-          </nav>
-          <div className="hidden md:flex items-center gap-4">
-            <ThemeToggle />
-            {user ? (
-              <UserAccountNav />
-            ) : (
-              <>
-                <Button variant="ghost" onClick={openLoginModal}>
-                  Log in
-                </Button>
-                <Button className="bg-teal-500 hover:bg-teal-600" onClick={openRegisterModal}>
-                  Sign up
-                </Button>
-              </>
-            )}
-          </div>
-          <MobileNav
-            isOpen={mobileMenuOpen}
-            setIsOpen={setMobileMenuOpen}
-            onLoginClick={openLoginModal}
-            onRegisterClick={openRegisterModal}
-            user={user}
-          />
-        </div>
-      </header>
+      <Navbar></Navbar>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
@@ -290,7 +236,9 @@ export default function Home() {
       <footer className="w-full border-t bg-background py-6 md:py-8">
         <div className="container flex flex-col items-center justify-center gap-4 px-4 md:flex-row md:justify-between md:px-6">
           <div className="flex items-center gap-2 font-semibold">
-            <div className="h-6 w-6 rounded-md bg-teal-500 flex items-center justify-center text-white text-xs">DS</div>
+            <div className="h-10 w-10 rounded-md  flex items-center justify-center text-white text-xs">
+              <Image src={"/dineSafe.png"} alt={""} width={100} height={100}></Image>
+            </div>
             <span>DineSafe</span>
           </div>
           <p className="text-center text-sm text-muted-foreground md:text-left">

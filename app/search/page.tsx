@@ -12,6 +12,7 @@ import { SortSelect } from "@/components/search/sort-select"
 import { MobileFilters } from "@/components/search/mobile-filters"
 import { restaurants, filterRestaurants, sortRestaurants } from "@/lib/restaurant-data"
 import { ThemeToggle } from "@/components/theme-toggle"
+import Image from "next/image"
 
 export default function SearchPage() {
   const searchParams = useSearchParams()
@@ -93,7 +94,9 @@ export default function SearchPage() {
               <span className="sr-only">Back</span>
             </Button>
             <div className="flex items-center gap-2 font-semibold">
-              <div className="h-8 w-8 rounded-md bg-teal-500 flex items-center justify-center text-white">DS</div>
+              <div className="h-10 w-10 rounded-md  flex items-center justify-center text-white">
+                <Image src={"/dineSafe.png"} alt={""} width={100} height={100}></Image>
+              </div>
               <span className="hidden md:inline">DineSafe</span>
             </div>
           </div>
@@ -251,7 +254,9 @@ export default function SearchPage() {
       <footer className="w-full border-t bg-background py-6 md:py-8">
         <div className="container flex flex-col items-center justify-center gap-4 px-4 md:flex-row md:justify-between md:px-6">
           <div className="flex items-center gap-2 font-semibold">
-            <div className="h-6 w-6 rounded-md bg-teal-500 flex items-center justify-center text-white text-xs">DS</div>
+            <div className="h-8 w-8 rounded-md  flex items-center justify-center text-white text-xs">
+              <Image src={"/dineSafe.png"} alt={""} width={100} height={100}></Image>
+            </div>
             <span>DineSafe</span>
           </div>
           <p className="text-center text-sm text-muted-foreground md:text-left">
