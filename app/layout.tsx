@@ -11,8 +11,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "DineSafe - Make Smarter Dining Decisions",
   description:
-    "DineSafe helps you choose restaurants with confidence by showing health inspection scores, violations, and reviews in one easy-to-use app.",
-    generator: 'v0.dev'
+    "DineSafe helps you choose restaurants with confidence by showing health inspection scores, violations, and reviews in one easy-to-use app."
 }
 
 export default function RootLayout({
