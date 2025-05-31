@@ -4,21 +4,19 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Search, Award, Star, MapPin, ArrowRight, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/components/auth/auth-provider"
-import { AuthModal } from "@/components/auth/auth-modal"
-import { UserAccountNav } from "@/components/auth/user-account-nav"
 import { SearchBar } from "@/components/search/search-bar"
 import { useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
 import Image from "next/image"
 import Navbar from "./navbar/page"
+import { SignedOut, SignInButton, SignUpButton, useAuth, useUser } from "@clerk/nextjs"
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [authView, setAuthView] = useState<"login" | "register">("login")
-  const { user } = useAuth()
+  const { user } = useUser()
   const router = useRouter()
 
   useEffect(() => {
@@ -267,8 +265,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Auth Modal */}
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultView={authView} />
+      
     </div>
   )
 }
@@ -286,7 +283,7 @@ function MobileNav({
   onRegisterClick: () => void
   user: any
 }) {
-  const { logout } = useAuth()
+  
   const router = useRouter()
 
   return (
@@ -348,16 +345,10 @@ function MobileNav({
                       <p className="text-sm text-muted-foreground">{user.email}</p>
                     </div>
                   </div>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      logout()
-                      setIsOpen(false)
-                    }}
-                  >
+                  <SignedOut>
                     Log out
-                  </Button>
+                  </SignedOut>
+                  
                 </>
               ) : (
                 <div className="flex flex-col gap-2">
@@ -368,6 +359,7 @@ function MobileNav({
                       setIsOpen(false)
                     }}
                   >
+                    
                     Sign up
                   </Button>
                   <Button
@@ -380,6 +372,7 @@ function MobileNav({
                   >
                     Log in
                   </Button>
+                  
                 </div>
               )}
             </div>

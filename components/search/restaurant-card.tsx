@@ -1,21 +1,39 @@
+"use client"
 import Link from "next/link"
 import Image from "next/image"
 import { Star, MapPin } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { type Restaurant, getPriceRangeSymbol, getHealthGradeColorClass } from "@/lib/restaurant-data"
+import { useEffect, useState } from "react"
 
 interface RestaurantCardProps {
   restaurant: Restaurant
 }
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
+  
+  const [inspection, setInspection] = useState<any>(null);
+
+
+  useEffect(() => {
+    fetch('/api/inspections')
+      .then(res => res.json())
+      .then(data => {
+        // Find the inspection for the current restaurant
+        const matched = data.find(
+          (r: any) =>
+            r["Restaurant Name"]?.toLowerCase().includes(restaurant.name.toLowerCase())
+        );
+        if (matched) setInspection(matched);
+      });
+  }, [restaurant.name]);
   return (
     <Link href={`/restaurant/${restaurant.id}`} className="block">
       <div className="group overflow-hidden rounded-lg border bg-card text-card-foreground transition-all hover:shadow-md">
         <div className="relative aspect-[3/2] w-full overflow-hidden">
           <Image
             src={restaurant.image || "/placeholder.svg"}
-            alt={restaurant.name}
+            alt={inspection?.name}
             fill
             className="object-cover transition-transform group-hover:scale-105"
           />
@@ -31,7 +49,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         </div>
         <div className="p-4">
           <div className="flex items-start justify-between">
-            <h3 className="font-semibold line-clamp-1">{restaurant.name}</h3>
+            <h3 className="font-semibold line-clamp-1">{inspection?.name}</h3>
             <span className="ml-2 whitespace-nowrap text-sm text-muted-foreground">
               {getPriceRangeSymbol(restaurant.priceRange)}
             </span>
@@ -52,7 +70,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           </div>
           <div className="mt-3 flex flex-wrap gap-1">
             <Badge variant="secondary" className="text-xs">
-              Health Score: {restaurant.healthScore.score}/100
+              Health Score: {inspection?.Score ?? restaurant.healthScore.score}/100
             </Badge>
             {restaurant.features.slice(0, 2).map((feature) => (
               <Badge key={feature} variant="outline" className="text-xs">
