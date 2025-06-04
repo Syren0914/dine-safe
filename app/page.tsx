@@ -10,6 +10,10 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import Image from "next/image"
 import Navbar from "./navbar/page"
 import { SignedOut, SignInButton, SignUpButton, useAuth, useUser } from "@clerk/nextjs"
+import { BackgroundPaths } from "@/components/background-paths"
+import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input"
+import { ContainerScroll } from "@/components/container-scroll-animation"
+import { HeroSection } from "./components/HeroSection/page"
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -18,6 +22,13 @@ export default function Home() {
   const [authView, setAuthView] = useState<"login" | "register">("login")
   const { user } = useUser()
   const router = useRouter()
+  const placeholders = [
+    "What's the first rule of Fight Club?",
+    "Who is Tyler Durden?",
+    "Where is Andrew Laeddis Hiding?",
+    "Write a Javascript method to reverse a string",
+    "How to assemble your own PC?",
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,9 +59,69 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar></Navbar>
+      {/* <Navbar></Navbar>
+      <BackgroundPaths title="DineSafe">
+      
+        <div className="flex flex-col items-center gap-6 text-center">
+          <p className="text-xl md:text-2xl text-neutral-700 dark:text-neutral-300 max-w-2xl">
+            Discover and explore Toronto's restaurants with confidence through our comprehensive food safety inspection database.
+          </p>
+          <PlaceholdersAndVanishInput placeholders={placeholders} onChange={function (e: React.ChangeEvent<HTMLInputElement>): void {
+                throw new Error("Function not implemented.")
+              } } onSubmit={function (e: React.FormEvent<HTMLFormElement>): void {
+                throw new Error("Function not implemented.")
+              } }></PlaceholdersAndVanishInput>
+          <div className="inline-block group relative bg-gradient-to-b from-black/10 to-white/10 
+            dark:from-white/10 dark:to-black/10 p-px rounded-2xl backdrop-blur-lg 
+            overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+              
+            <Button
+              variant="ghost"
+              className="rounded-[1.15rem] px-8 py-6 text-lg font-semibold backdrop-blur-md 
+                bg-white/95 hover:bg-white/100 dark:bg-black/95 dark:hover:bg-black/100 
+                text-black dark:text-white transition-all duration-300 
+                group-hover:-translate-y-0.5 border border-black/10 dark:border-white/10
+                hover:shadow-md dark:hover:shadow-neutral-800/50"
+            >
+              
+              <span className="opacity-90 group-hover:opacity-100 transition-opacity">
+                Explore Restaurants
+              </span>
+              <span className="ml-3 opacity-70 group-hover:opacity-100 group-hover:translate-x-1.5 
+                transition-all duration-300">
+                →
+              </span>
+            </Button>
+          </div>
+        </div>
+        
+      </BackgroundPaths> */}
+      <HeroSection></HeroSection>
+      
+      
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+      <ContainerScroll
+        titleComponent={
+          <>
+            <h1 className="text-4xl font-semibold text-black dark:text-white">
+              Unleash the power of <br />
+              <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
+                Scroll Animations
+              </span>
+            </h1>
+          </>
+        }
+      >
+        <Image
+          src={`https://ui.aceternity.com/_next/image?url=%2Flinear.webp&w=3840&q=75`}
+          alt="hero"
+          height={720}
+          width={1400}
+          className="mx-auto rounded-2xl object-cover h-full object-left-top"
+          draggable={false}
+        />
+      </ContainerScroll>
+        {/* <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
               <div className="flex flex-col justify-center space-y-4">
@@ -133,7 +204,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
         <section id="features" className="w-full bg-muted/50 py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center space-y-4 text-center">

@@ -9,6 +9,11 @@ module.exports = {
     "*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    extend: {
+      fontFamily: {
+        roobert: ['var(--font-roobert)', 'sans-serif'],
+      },
+    },
     container: {
       center: true,
       padding: "2rem",

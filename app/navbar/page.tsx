@@ -1,227 +1,136 @@
-import React from 'react'
-import { useState, useEffect } from "react"
-import { Search, Award, Star, MapPin, ArrowRight, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs"
+import { Menu, X } from "lucide-react"
+import Link from "next/link"
+import React from "react"
 
-import { SearchBar } from "@/components/search/search-bar"
-import { useRouter } from "next/navigation"
-import { ThemeToggle } from "@/components/theme-toggle"
-import Image from 'next/image'
-import Link from 'next/link'
-import { SignedOut, SignInButton, SignUpButton, useUser, UserButton } from '@clerk/nextjs'
+const menuItems = [
+  { name: 'Features', href: '#link' },
+  { name: 'Pricing', href: '#link' },
+  { name: 'About', href: '#link' },
+]
+
+const HeroHeader = () => {
+  const [menuState, setMenuState] = React.useState(false)
+  const [isScrolled, setIsScrolled] = React.useState(false)
+  const { user } = useUser()
 
 
-
-
-
-
-export default function Navbar() {
-    const [isScrolled, setIsScrolled] = useState(false)
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-    const [authModalOpen, setAuthModalOpen] = useState(false)
-    const [authView, setAuthView] = useState<"login" | "register">("login")
-    const { user } = useUser()
-    const router = useRouter()
-  
-    useEffect(() => {
+  React.useEffect(() => {
       const handleScroll = () => {
-        if (window.scrollY > 10) {
-          setIsScrolled(true)
-        } else {
-          setIsScrolled(false)
-        }
+          setIsScrolled(window.scrollY > 50)
       }
-  
-      window.addEventListener("scroll", handleScroll)
-      return () => window.removeEventListener("scroll", handleScroll)
-    }, [])
-  
-    const openLoginModal = () => {
-      setAuthView("login")
-      setAuthModalOpen(true)
-    }
-  
-    const openRegisterModal = () => {
-      setAuthView("register")
-      setAuthModalOpen(true)
-    }
-  
-    const handleSearch = (value: string) => {
-      router.push(`/search?q=${encodeURIComponent(value)}`)
-    }
+      window.addEventListener('scroll', handleScroll)
+      return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
   return (
-    <div>
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2 font-semibold">
-            <div className="h-10 w-10 rounded-md  flex items-center justify-center">
-              <Image src={"/dineSafe.png"} alt={""} height={100} width={100}></Image>
-            </div>
-            <span>DineSafe</span>
-          </div>
-          <nav className="hidden md:flex gap-6">
-            <Link
-              href="#features"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Features
-            </Link>
-            <Link
-              href="#about"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              About
-            </Link>
-            <Link
-              href="#feedback"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Feedback
-            </Link>
-            <Link
-              href="/map"
-              className="text-sm font-medium te xt-muted-foreground transition-colors hover:text-foreground"
-            >
-              Maps
-            </Link>
+      <header>
+          <nav
+              data-state={menuState && 'active'}
+              className="fixed z-20 w-full px-2 group">
+              <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5')}>
+                  <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
+                      <div className="flex w-full justify-between lg:w-auto">
+                          <Link
+                              href="/"
+                              aria-label="home"
+                              className="flex items-center space-x-2">
+                              <Logo /> DineSafe
+                          </Link>
 
+                          <button
+                              onClick={() => setMenuState(!menuState)}
+                              aria-label={menuState == true ? 'Close Menu' : 'Open Menu'}
+                              className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden">
+                              <Menu className="in-data-[state=active]:rotate-180 group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
+                              <X className="group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
+                          </button>
+                      </div>
+
+                      <div className="absolute inset-0 m-auto hidden size-fit lg:block">
+                          <ul className="flex gap-8 text-sm">
+                              {menuItems.map((item, index) => (
+                                  <li key={index}>
+                                      <Link
+                                          href={item.href}
+                                          className="text-muted-foreground hover:text-accent-foreground block duration-150">
+                                          <span>{item.name}</span>
+                                      </Link>
+                                  </li>
+                              ))}
+                          </ul>
+                      </div>
+
+                      <div className="bg-background group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent">
+                          <div className="lg:hidden">
+                              <ul className="space-y-6 text-base">
+                                  {menuItems.map((item, index) => (
+                                      <li key={index}>
+                                          <Link
+                                              href={item.href}
+                                              className="text-muted-foreground hover:text-accent-foreground block duration-150">
+                                              <span>{item.name}</span>
+                                          </Link>
+                                      </li>
+                                  ))}
+                              </ul>
+                          </div>
+                          <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
+                          <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit lg:border-l lg:pl-6">
+                                {!user ? (
+                                  <>
+                                    <SignInButton mode="modal">
+                                      <Button variant="outline" size="sm">Sign In</Button>
+                                    </SignInButton>
+                                    <SignUpButton mode="modal">
+                                      <Button size="sm">Sign Up</Button>
+                                    </SignUpButton>
+                                    
+                                  </>
+                                ) : (
+                                  <UserButton afterSignOutUrl="/" />
+                                )}
+                              </div>
+                              
+                          </div>
+                      </div>
+                  </div>
+              </div>
           </nav>
-          <div className="hidden md:flex items-center gap-4">
-            <ThemeToggle />
-            {user ? (
-              <UserButton />
-            ) : (
-              <>
-                <div>
-                <SignInButton>Log in</SignInButton>
-                </div>
-                <div className="bg-teal-500 rounded-md p-2 text-white text-sm hover:bg-teal-600">
-                  <SignUpButton>Sign up</SignUpButton>
-                </div>
-                
-                
-              </>
-            )}
-          </div>
-          <MobileNav
-            isOpen={mobileMenuOpen}
-            setIsOpen={setMobileMenuOpen}
-            onLoginClick={openLoginModal}
-            onRegisterClick={openRegisterModal}
-            user={user}
-          />
-        </div>
       </header>
-    </div>
   )
 }
 
-function MobileNav({
-    isOpen,
-    setIsOpen,
-    onLoginClick,
-    onRegisterClick,
-    user,
-  }: {
-    isOpen: boolean
-    setIsOpen: (isOpen: boolean) => void
-    onLoginClick: () => void
-    onRegisterClick: () => void
-    user: any
-  }) {
-    
-    const router = useRouter()
-  
-    return (
-      <div className="md:hidden">
-        <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          <span className="sr-only">Toggle menu</span>
-        </Button>
-        {isOpen && (
-          <div className="fixed inset-0 top-16 z-50 bg-background/95 backdrop-blur-sm animate-in">
-            <nav className="container flex flex-col gap-6 p-6">
-              <Link
-                href="#features"
-                className="text-lg font-medium transition-colors hover:text-foreground"
-                onClick={() => setIsOpen(false)}
-              >
-                Features
-              </Link>
-              <Link
-                href="#about"
-                className="text-lg font-medium transition-colors hover:text-foreground"
-                onClick={() => setIsOpen(false)}
-              >
-                About
-              </Link>
-              <Link
-                href="#feedback"
-                className="text-lg font-medium transition-colors hover:text-foreground"
-                onClick={() => setIsOpen(false)}
-              >
-                Feedback
-              </Link>
-              <Button
-                variant="outline"
-                className="flex justify-start"
-                onClick={() => {
-                  router.push("/search")
-                  setIsOpen(false)
-                }}
-              >
-                <Search className="mr-2 h-4 w-4" />
-                Search Restaurants
-              </Button>
-              <div className="border-t pt-4 mt-2">
-                <div className="mb-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Theme</span>
-                    <ThemeToggle />
-                  </div>
-                </div>
-                {user ? (
-                  <>
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="h-8 w-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-700">
-                        {user.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="font-medium">{user.name}</p>
-                        <p className="text-sm text-muted-foreground">{user.email}</p>
-                      </div>
-                    </div>
-                    <SignedOut>
-                      
-                    </SignedOut>
-                  </>
-                ) : (
-                  <div className="flex flex-col gap-2">
-                    <Button
-                      className="w-full bg-teal-500 hover:bg-teal-600"
-                      onClick={() => {
-                        onRegisterClick()
-                        setIsOpen(false)
-                      }}
-                    >
-                      Sign up
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => {
-                        onLoginClick()
-                        setIsOpen(false)
-                      }}
-                    >
-                      Log in
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </nav>
-          </div>
-        )}
-      </div>
-    )
-  }
+export default HeroHeader
+
+const Logo = ({ className }: { className?: string }) => {
+  return (
+      <svg
+          viewBox="0 0 78 18"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={cn('h-5 w-auto', className)}>
+          <path
+              d="M3 0H5V18H3V0ZM13 0H15V18H13V0ZM18 3V5H0V3H18ZM0 15V13H18V15H0Z"
+              fill="url(#logo-gradient)"
+          />
+          
+          <defs>
+              <linearGradient
+                  id="logo-gradient"
+                  x1="10"
+                  y1="0"
+                  x2="10"
+                  y2="20"
+                  gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#9B99FE" />
+                  <stop
+                      offset="1"
+                      stopColor="#2BC8B7"
+                  />
+              </linearGradient>
+          </defs>
+      </svg>
+  )
+}

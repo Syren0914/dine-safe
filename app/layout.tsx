@@ -7,18 +7,9 @@ import {
   SignedOut,
   UserButton,
 } from '@clerk/nextjs'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { ThemeProvider } from 'next-themes'
+import ThemeToggle from './components/ThemeToggle'
 import './globals.css'
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-})
 
 export const metadata: Metadata = {
   title: 'Clerk Next.js Quickstart',
@@ -32,17 +23,14 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <header className="flex justify-end items-center ">
-            <SignedOut>
-              
-            </SignedOut>
-            <SignedIn>
-              
-            </SignedIn>
-          </header>
-          {children}
+      <html lang="en" suppressHydrationWarning>
+        <body className="antialiased font-roobert">
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <header className="flex justify-between items-center ">
+              {/* Theme toggle or nav goes here */}
+            </header>
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
