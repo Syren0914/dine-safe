@@ -6,6 +6,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const client = await MongoClient.connect('mongodb://localhost:27017');
   const db = client.db('inspectionsDB');
 
-  const inspections = await db.collection('graded_inspections').find().toArray();
+  const inspections = await db.collection('inspections').find().toArray();
   res.status(200).json(inspections);
 }
