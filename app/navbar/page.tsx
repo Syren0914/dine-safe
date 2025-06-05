@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs"
@@ -9,6 +10,8 @@ const menuItems = [
   { name: 'Features', href: '#link' },
   { name: 'Pricing', href: '#link' },
   { name: 'About', href: '#link' },
+  { name: 'Map', href: '/map' },
+
 ]
 
 const HeroHeader = () => {
@@ -86,6 +89,7 @@ const HeroHeader = () => {
                                     <SignUpButton mode="modal">
                                       <Button size="sm">Sign Up</Button>
                                     </SignUpButton>
+                                    <ThemeToggle />
                                     
                                   </>
                                 ) : (
