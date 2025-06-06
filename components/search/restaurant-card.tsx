@@ -11,45 +11,56 @@ interface RestaurantCardProps {
 }
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
+  const [inspection, setInspection] = useState<any>(null)
   
-  const [inspection, setInspection] = useState<any>(null);
-
 
   useEffect(() => {
-    fetch('/api/inspections')
-      .then(res => res.json())
-      .then(data => {
-        // Find the inspection for the current restaurant
-        const matched = data.find(
-          (r: any) =>
-            r["Restaurant Name"]?.toLowerCase().includes(restaurant.name.toLowerCase())
-        );
-        if (matched) setInspection(matched);
-      });
-  }, [restaurant.name]);
+    const fetchInspection = async () => {
+      try {
+        const res = await fetch("/api/inspections")
+        const data = await res.json()
+
+        const matched = data.find((r: any) =>
+          r["Restaurant Name"]?.toLowerCase().includes(restaurant.name.toLowerCase())
+        )
+
+        if (matched) setInspection(matched)
+      } catch (err) {
+        console.error("Failed to fetch inspection data", err)
+      }
+    }
+
+    fetchInspection()
+  }, [restaurant.name])
+
+  const healthGrade = inspection?.Grade || restaurant.healthScore.grade
+  const score = inspection?.Score ?? restaurant.healthScore.score
+  const name = inspection?.["Restaurant Name"] || restaurant.name
+
   return (
     <Link href={`/restaurant/${restaurant.id}`} className="block">
       <div className="group overflow-hidden rounded-lg border bg-card text-card-foreground transition-all hover:shadow-md">
         <div className="relative aspect-[3/2] w-full overflow-hidden">
-          <Image
-            src={restaurant.image || "/placeholder.svg"}
-            alt={inspection?.name}
-            fill
-            className="object-cover transition-transform group-hover:scale-105"
-          />
+        <Image
+          src={"/placeholder.svg"}
+          alt={name}
+          fill
+          className="object-cover transition-transform group-hover:scale-105"
+        />
+
           <div className="absolute right-2 top-2">
             <div
               className={`flex h-8 w-8 items-center justify-center rounded-md text-sm font-bold ${getHealthGradeColorClass(
-                restaurant.healthScore.grade,
+                healthGrade,
               )}`}
             >
-              {restaurant.healthScore.grade}
+              {healthGrade}
             </div>
           </div>
         </div>
         <div className="p-4">
           <div className="flex items-start justify-between">
-            <h3 className="font-semibold line-clamp-1">{inspection?.name}</h3>
+            <h3 className="font-semibold line-clamp-1">{name}</h3>
             <span className="ml-2 whitespace-nowrap text-sm text-muted-foreground">
               {getPriceRangeSymbol(restaurant.priceRange)}
             </span>
@@ -59,7 +70,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             <div className="flex items-center">
               <Star className="mr-1 h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span>
-                {restaurant.ratings.overall} ({restaurant.ratings.count})
+                {/* {restaurant.ratings.overall} ({restaurant.ratings.count}) */}
               </span>
             </div>
             <span className="mx-2 text-muted-foreground">•</span>
@@ -70,9 +81,9 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           </div>
           <div className="mt-3 flex flex-wrap gap-1">
             <Badge variant="secondary" className="text-xs">
-              Health Score: {inspection?.Score ?? restaurant.healthScore.score}/100
+              Health Score: {score}/100
             </Badge>
-            {restaurant.features.slice(0, 2).map((feature) => (
+            {/* {restaurant.features.slice(0, 2).map((feature) => (
               <Badge key={feature} variant="outline" className="text-xs">
                 {feature}
               </Badge>
@@ -81,7 +92,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
               <Badge variant="outline" className="text-xs">
                 +{restaurant.features.length - 2} more
               </Badge>
-            )}
+            )} */}
           </div>
         </div>
       </div>

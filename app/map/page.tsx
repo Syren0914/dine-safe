@@ -15,6 +15,11 @@ import { MobileFilters } from "@/components/search/mobile-filters"
 import { restaurants, filterRestaurants } from "@/lib/restaurant-data"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { Footer } from "../components/Footer/Footer"
+import dynamic from "next/dynamic"
+import HeroHeader from "../navbar/page"
+import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input"
+
 
 // Use dynamic import with no SSR for the LeafletMap component
 const MapPlaceholder = () => (
@@ -27,6 +32,21 @@ const MapPlaceholder = () => (
 )
 
 export default function MapPage() {
+  interface SearchBarProps {
+    initialValue?: string
+    onSearch?: (value: string) => void
+    placeholder?: string
+    className?: string
+    autoFocus?: boolean
+  }
+  const placeholders = [
+    "What's the first rule of Fight Club?",
+    "Who is Tyler Durden?",
+    "Where is Andrew Laeddis Hiding?",
+    "Write a Javascript method to reverse a string",
+    "How to assemble your own PC?",
+  ];
+  
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredRestaurants, setFilteredRestaurants] = useState(restaurants)
@@ -39,7 +59,50 @@ export default function MapPage() {
     features: [] as string[],
   })
   const [showMap, setShowMap] = useState(false)
-  const [LeafletMap, setLeafletMap] = useState<React.ComponentType<any> | null>(null)
+  const [inspectionData, setInspectionData] = useState<any[]>([])
+
+  useEffect(() => {
+    const fetchInspections = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:5000/api/inspections")
+        const data = await res.json()
+        setInspectionData(data)
+      } catch (error) {
+        console.error("Failed to fetch inspection data:", error)
+      }
+    }
+
+    fetchInspections()
+  }, [])
+  useEffect(() => {
+    const fetchAndTransform = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:5000/api/inspections")
+        const data = await res.json()
+  
+        const transformed = data.map((entry: any, index: number) => ({
+          id: index.toString(),
+          name: entry["Restaurant Name"],
+          healthScore: {
+            score: entry["Score"],
+            grade: entry["Grade"]
+          },
+          latitude: entry["Latitude"] ?? 37.2296,     // fallback to default
+          longitude: entry["Longitude"] ?? -80.4139,  // fallback to default
+          inspectionDate: entry["Inspection Date"],
+          violations: entry["Violations"],
+        }))
+  
+        setFilteredRestaurants(transformed)
+      } catch (error) {
+        console.error("Failed to fetch inspection data:", error)
+      }
+    }
+  
+    fetchAndTransform()
+  }, [])
+  
+
 
   // Check if any filters are applied
   const hasFilters =
@@ -57,36 +120,48 @@ export default function MapPage() {
     })
     setFilteredRestaurants(filtered)
   }, [searchTerm, filters])
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch("/api/inspections")
+      const data = await res.json()
+  
+      const transformed = data
+        .filter((entry: any) => entry.location?.longitude && entry.location?.latitude)
+        .map((entry: any, index: number) => ({
+          id: entry._id?.$oid || index.toString(),
+          name: entry["Restaurant Name"] || "Unnamed",
+          cuisine: "Unknown",
+          latitude: entry.location.latitude,
+          longitude: entry.location.longitude,
+          address: entry.location.formatted_address || "Unknown",
+          healthScore: {
+            score: entry.Score || 0,
+            grade: entry.Grade || "N/A",
+          },
+          ratings: { overall: 4.2, count: 80 },
+          priceRange: 2,
+          neighborhood: "Unknown",
+          features: [],
+          image_urls: entry.image_urls || [],
+        }))
+  
+      setFilteredRestaurants(transformed)
+    }
+  
+    fetchData()
+  }, [])
+  
+  
 
   // Dynamically import the LeafletMap component
-  useEffect(() => {
-    let isMounted = true
+  
 
-    const loadMap = async () => {
-      try {
-        // Delay to ensure DOM is ready
-        await new Promise((resolve) => setTimeout(resolve, 500))
+  const Mapbox3DMap = dynamic(() => import('@/components/map/map-view'), {
+    ssr: false,
+    loading: () => <MapPlaceholder />
+  })
 
-        if (!isMounted) return
-
-        // Dynamic import
-        const module = await import("@/components/map/leaflet-map")
-
-        if (!isMounted) return
-
-        setLeafletMap(() => module.default)
-        setShowMap(true)
-      } catch (error) {
-        console.error("Error loading map component:", error)
-      }
-    }
-
-    loadMap()
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
 
   // Handle search input
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +171,10 @@ export default function MapPage() {
   // Handle filter changes
   const handleFilterChange = (newFilters: typeof filters) => {
     setFilters(newFilters)
+  }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    router.push(`/search?q=${encodeURIComponent(searchTerm)}`)
   }
 
   // Handle reset filters
@@ -148,48 +227,14 @@ export default function MapPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col ">
+      <HeroHeader />
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={() => router.push("/")} className="mr-2">
-              <ArrowLeft className="h-5 w-5" />
-              <span className="sr-only">Back</span>
-            </Button>
-            <div className="flex items-center gap-2 font-semibold">
-              <div className="h-10 w-10 rounded-md  flex items-center justify-center text-white">
-                <Image src={"/dineSafe.png"} alt={""} width={100} height={100}></Image>
-              </div>
-              <span className="hidden md:inline">DineSafe</span>
-            </div>
-          </div>
+      
+      
+      
 
-          <div className="flex-1 mx-4 max-w-xl relative">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search restaurants, cuisines..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className="pl-9 pr-4"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Link href="/search">
-              <Button variant="ghost" size="sm" className="hidden md:flex">
-                Search
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-1">
+      <main className="flex-1 pt-[100px]">
         {/* Map Controls */}
         <div className="container px-4 py-4 flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -198,6 +243,13 @@ export default function MapPage() {
               {filteredRestaurants.length} {filteredRestaurants.length === 1 ? "restaurant" : "restaurants"} found
             </p>
           </div>
+          <PlaceholdersAndVanishInput
+                    placeholders={placeholders}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onSubmit={handleSubmit}
+                  >
+                    
+                  </PlaceholdersAndVanishInput>
 
           <div className="flex items-center gap-3">
             <MobileFilters
@@ -263,11 +315,12 @@ export default function MapPage() {
         <div className="container px-4 pb-8">
           {view === "map" ? (
             <>
-              {showMap && LeafletMap ? (
-                <LeafletMap restaurants={filteredRestaurants} height="calc(100vh - 220px)" className="min-h-[500px]" />
-              ) : (
-                renderStaticMap()
-              )}
+              <Mapbox3DMap
+                restaurants={filteredRestaurants}
+                height="calc(100vh - 220px)"
+                className="min-h-[500px]"
+              />
+
             </>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -294,19 +347,7 @@ export default function MapPage() {
         </div>
       </main>
 
-      <footer className="w-full border-t bg-background py-6 md:py-8">
-        <div className="container flex flex-col items-center justify-center gap-4 px-4 md:flex-row md:justify-between md:px-6">
-          <div className="flex items-center gap-2 font-semibold">
-            <div className="h-8 w-8 rounded-md  flex items-center justify-center text-white text-xs">
-            <Image src={"/dineSafe.png"} alt={""} width={100} height={100}></Image>
-            </div>
-            <span>DineSafe</span>
-          </div>
-          <p className="text-center text-sm text-muted-foreground md:text-left">
-            © 2023 DineSafe. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer></Footer>
     </div>
   )
 }

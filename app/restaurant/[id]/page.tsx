@@ -27,10 +27,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
-import { useAuth } from "@/components/auth/auth-provider"
-import { AuthModal } from "@/components/auth/auth-modal"
 import { ThemeToggle } from "@/components/theme-toggle"
 import  LeafletMap  from "@/components/map/leaflet-map"
+import { useAuth } from "@clerk/nextjs"
 
 // Mock data for a restaurant
 const restaurantData = {

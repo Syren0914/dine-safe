@@ -227,7 +227,8 @@ function LeafletMap({
                   <span style="font-size: 12px;">Health Score: ${restaurant.healthScore.score}/100</span>
                 </div>
                 <div style="font-size: 12px; margin-bottom: 8px;">
-                  ★ ${restaurant.ratings.overall} (${restaurant.ratings.count} reviews)
+                  ★ $40 
+                  
                 </div>
                 <button 
                   onclick="window.location.href='/restaurant/${restaurant.id}'"

@@ -1,15 +1,18 @@
+"use client"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs"
 import { Menu, X } from "lucide-react"
 import Link from "next/link"
+import { useTransitionRouter } from "next-view-transitions"
 import React from "react"
 
+
 const menuItems = [
-  { name: 'Features', href: '#link' },
-  { name: 'Pricing', href: '#link' },
-  { name: 'About', href: '#link' },
+  { name: 'Home', href: '/' },
+  { name: 'Pricing', href: '/Pricing' },
+  { name: 'About', href: '/About' },
   { name: 'Map', href: '/map' },
 
 ]
@@ -18,6 +21,8 @@ const HeroHeader = () => {
   const [menuState, setMenuState] = React.useState(false)
   const [isScrolled, setIsScrolled] = React.useState(false)
   const { user } = useUser()
+  const router = useTransitionRouter()
+
 
 
   React.useEffect(() => {
@@ -28,7 +33,7 @@ const HeroHeader = () => {
       return () => window.removeEventListener('scroll', handleScroll)
   }, [])
   return (
-      <header>
+      <header className="z-40">
           <nav
               data-state={menuState && 'active'}
               className="fixed z-20 w-full px-2 group">
@@ -51,13 +56,21 @@ const HeroHeader = () => {
                           </button>
                       </div>
 
-                      <div className="absolute inset-0 m-auto hidden size-fit lg:block">
+                      <div className="absolute inset-0 m-auto hidden size-fit lg:block z-50">
                           <ul className="flex gap-8 text-sm">
                               {menuItems.map((item, index) => (
                                   <li key={index}>
                                       <Link
                                           href={item.href}
-                                          className="text-muted-foreground hover:text-accent-foreground block duration-150">
+                                          className="text-white hover:text-lime-200 block duration-150" 
+                                          onClick={async (e) => {
+                                            e.preventDefault();
+                                            await router.push(item.href, {
+                                              onTransitionReady: pageTransition,
+                                            });
+                                          }}
+                                          
+                                          >
                                           <span>{item.name}</span>
                                       </Link>
                                   </li>
@@ -138,3 +151,41 @@ const Logo = ({ className }: { className?: string }) => {
       </svg>
   )
 }
+
+const pageTransition = () => {
+    return new Promise<void>((resolve, reject) => {
+        try {
+            const oldView = document.documentElement.animate(
+                [
+                { opacity: 1, transform: 'translateY(0px)' },
+                { opacity: 0, transform: 'translateY(-30px)' },
+                ],
+                {
+                duration: 300,
+                easing: 'ease-in-out',
+                fill: 'forwards',
+                pseudoElement: '::view-transition-old(root)',
+                }
+            )
+        
+            const newView = document.documentElement.animate(
+                [
+                { opacity: 0, transform: 'translateY(30px)' },
+                { opacity: 1, transform: 'translateY(0)' },
+                ],
+                {
+                duration: 300,
+                easing: 'ease-in-out',
+                fill: 'forwards',
+                pseudoElement: '::view-transition-new(root)',
+                }
+            )
+        
+            Promise.all([oldView.finished, newView.finished]).then(() => resolve()).catch(reject)
+        } catch (err) {
+            console.error("Transition failed:", err);
+            reject(err);
+        }
+    })
+}
+  
