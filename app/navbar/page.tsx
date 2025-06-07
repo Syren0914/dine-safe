@@ -11,9 +11,9 @@ import React from "react"
 
 const menuItems = [
   { name: 'Home', href: '/' },
-  { name: 'Pricing', href: '/Pricing' },
   { name: 'About', href: '/About' },
   { name: 'Map', href: '/map' },
+  { name: 'Pricing', href: '/pricing' },
 
 ]
 

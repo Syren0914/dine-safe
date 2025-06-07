@@ -5,7 +5,8 @@ import {
 import { ThemeProvider } from 'next-themes'
 import './globals.css'
 import { ViewTransitions } from 'next-view-transitions'
-import SplashCursor from './Animations/SplashCursor/SplashCursor'
+import { ExpandableChatDemo } from '@/components/chat/chat'
+
 
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body className="antialiased font-roobert">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ExpandableChatDemo/>
             <header className="flex justify-between items-center ">
               {/* Theme toggle or nav goes here */}
               

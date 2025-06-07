@@ -13,6 +13,7 @@ import { CommitsGrid } from "@/components/commits-grid/commits-grid"
 import Link from "next/link"
 import { Footer } from "../components/Footer/Footer"
 import SchemaCard from "@/components/schema-card/schema-card"
+import SplashCursor from "../Animations/SplashCursor/SplashCursor"
 
 const agencySkills = [
   "Web Development",
@@ -61,6 +62,9 @@ const teamMembers = [
 function About() {
   return (
     <div className="relative min-h-screen  text-white overflow-x-hidden">
+      
+      <SplashCursor/>
+
       <HeroHeader />
 
       {/* Background Layer */}
@@ -75,6 +79,9 @@ function About() {
 
       {/* Content */}
       <main className="pt-[100px] container mx-auto px-4">
+      <div className="absolute inset-0 opacity-10">
+                  <div className="w-full h-full animate-pulse" style={{ backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px)', backgroundSize: '15px 15px' }} />
+                </div>
 
       <section className="py-16 md:py-32">
       
@@ -193,25 +200,12 @@ function About() {
         </motion.section>
 
         <motion.section
-          className="py-12"
+          className="py-12 "
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">Let&apos;s Work Together</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4">
-                Ready to bring your digital vision to life? Our team is here to help you create innovative solutions
-                that drive results.
-              </p>
-              <Button size="lg" asChild>
-                <a href="/#contact">Contact Us</a>
-              </Button>
-            </CardContent>
-          </Card>
+          
         </motion.section>
       </main>
       <Footer/>

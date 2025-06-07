@@ -11,10 +11,11 @@ import { SignedOut, SignInButton, SignUpButton, useAuth, useUser } from "@clerk/
 import { HeroSection } from "./components/HeroSection/page"
 import Features from "./components/Features/Features"
 import Aurora from "./Backgrounds/Aurora/Aurora"
-import SplashCursor from "./Animations/SplashCursor/SplashCursor"
+
 import HeroHeader from "./navbar/page"
 import Testimonials from "./components/Testimonials/page"
 import { Footer } from "./components/Footer/Footer"
+import SplashCursor from "./Animations/SplashCursor/SplashCursor"
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -56,6 +57,7 @@ export default function Home() {
     <div className=" min-h-screen ">      
       <HeroHeader />
       <SplashCursor/>
+
       <HeroSection/>
       <Features/>
       <Testimonials.Testimonials/>
