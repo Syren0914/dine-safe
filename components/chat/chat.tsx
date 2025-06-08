@@ -87,7 +87,7 @@ export function ExpandableChatDemo() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative z-50">
       <ExpandableChat
         size="sm"
         position="bottom-right"

@@ -54,7 +54,7 @@
     "framer-motion": "^12.16.0",
     "gsap": "^3.13.0",
     "input-otp": "1.4.1",
-    "langchain": "^0.3.27",
+    "langchain": "^0.1.14",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.454.0",
     "mapbox-gl": "^3.12.0",

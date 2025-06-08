@@ -1,7 +1,8 @@
 import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai"
 import { RetrievalQAChain } from "langchain/chains"
 import { MemoryVectorStore } from "langchain/vectorstores/memory"
-import { Document } from "langchain/core/documents"
+import { Document } from "langchain/document"
+
 
 
 
@@ -13,20 +14,19 @@ export async function createInspectionQAChain() {
 
   const docs = data.map((entry: any) => {
     const content = `
-Restaurant: ${entry["Restaurant Name"]}
-Score: ${entry["Score"]}
-Grade: ${entry["Grade"]}
-Date: ${entry["Inspection Date"]}
-Violations: ${Array.isArray(entry["Violations"])
-        ? entry["Violations"].map((v: any) => `${v.Section}: ${v.Observation}`).join("; ")
-        : entry["Violations"] || "None"}
+  Restaurant: ${entry["Restaurant Name"]}
+  Score: ${entry["Score"]}
+  Grade: ${entry["Grade"]}
+  Date: ${entry["Inspection Date"]}
+  Violations: ${entry["Violations"]?.map((v: any) => `${v.Section}: ${v.Observation}`).join("; ") || "None"}
     `.trim()
-
-    return new Document({
+  
+    return {
       pageContent: content,
       metadata: { name: entry["Restaurant Name"] },
-    })
+    }
   })
+  
 
   const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbeddings())
 
@@ -34,6 +34,7 @@ Violations: ${Array.isArray(entry["Violations"])
     temperature: 0,
     openAIApiKey: process.env.OPENAI_API_KEY,
   })
+  
 
   return RetrievalQAChain.fromLLM(model, vectorStore.asRetriever({ k: 4 }))
 }
