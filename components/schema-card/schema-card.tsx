@@ -32,7 +32,7 @@ export default function SchemaCard() {
     {
       name: "Izzy Burley",
       role: "UX/UI Designer",
-      image: "/emily.jpg",
+      image: "/izzy.jpg",
       bio: "Emily creates intuitive and beautiful user interfaces that drive engagement.",
       skills: ["UI Design", "User Research", "Prototyping", "Figma"],
       github: "https://github.com/emilybrown",

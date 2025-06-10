@@ -33,7 +33,7 @@ const HeroHeader = () => {
       return () => window.removeEventListener('scroll', handleScroll)
   }, [])
   return (
-      <header className="z-40">
+      <header className="z-60">
           <nav
               data-state={menuState && 'active'}
               className="fixed z-20 w-full px-2 group">

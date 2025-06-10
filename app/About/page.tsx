@@ -14,6 +14,7 @@ import Link from "next/link"
 import { Footer } from "../components/Footer/Footer"
 import SchemaCard from "@/components/schema-card/schema-card"
 import SplashCursor from "../Animations/SplashCursor/SplashCursor"
+import AnimatedGradientBackground from "@/components/animated-gradient/animated-gradient"
 
 const agencySkills = [
   "Web Development",
@@ -50,7 +51,7 @@ const teamMembers = [
   {
     name: "Izzy Burley",
     role: "UX/UI Designer",
-    image: "/emily.jpg",
+    image: "/izzy.jpg",
     bio: "Emily creates intuitive and beautiful user interfaces that drive engagement.",
     skills: ["UI Design", "User Research", "Prototyping", "Figma"],
     github: "https://github.com/emilybrown",
@@ -70,6 +71,13 @@ function About() {
       {/* Background Layer */}
       <div className="fixed top-0 left-0 w-full h-full -z-10">
         <Lightning hue={220} xOffset={0} speed={1} intensity={1} size={1} />
+        {/* <AnimatedGradientBackground 
+        gradientColors={["#0A0A0A", "#2979FF", "#FF80AB", "#FF6D00", "#FFD600", "#00E676", "#3D5AFE"]}
+        gradientStops={[35, 50, 60, 70, 80, 90, 100]}
+        animationSpeed={0.02}
+        breathingRange={5}
+        containerClassName="bg-gradient-to-b from-black to-indigo-950"
+      /> */}
         
         
       </div>
