@@ -1,3 +1,4 @@
+"use client"
 import { TestimonialsColumn } from "./testimonials";
 import { motion } from "motion/react";
 
