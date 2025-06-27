@@ -19,6 +19,8 @@ import { Footer } from "../components/Footer/Footer"
 import dynamic from "next/dynamic"
 import HeroHeader from "../navbar/page"
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input"
+import { transformInspectionsToRestaurants } from "@/lib/inspection-utils"
+import type { InspectionData } from "@/types/inspection"
 
 
 // Use dynamic import with no SSR for the LeafletMap component
@@ -59,12 +61,12 @@ export default function MapPage() {
     features: [] as string[],
   })
   const [showMap, setShowMap] = useState(false)
-  const [inspectionData, setInspectionData] = useState<any[]>([])
+  const [inspectionData, setInspectionData] = useState<InspectionData[]>([])
 
   useEffect(() => {
     const fetchInspections = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/inspections")
+        const res = await fetch("/api/inspections")
         const data = await res.json()
         setInspectionData(data)
       } catch (error) {
@@ -74,25 +76,14 @@ export default function MapPage() {
 
     fetchInspections()
   }, [])
+
   useEffect(() => {
     const fetchAndTransform = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/inspections")
-        const data = await res.json()
+        const res = await fetch("/api/inspections")
+        const data: InspectionData[] = await res.json()
   
-        const transformed = data.map((entry: any, index: number) => ({
-          id: index.toString(),
-          name: entry["Restaurant Name"],
-          healthScore: {
-            score: entry["Score"],
-            grade: entry["Grade"]
-          },
-          latitude: entry["Latitude"] ?? 37.2296,     // fallback to default
-          longitude: entry["Longitude"] ?? -80.4139,  // fallback to default
-          inspectionDate: entry["Inspection Date"],
-          violations: entry["Violations"],
-        }))
-  
+        const transformed = transformInspectionsToRestaurants(data)
         setFilteredRestaurants(transformed)
       } catch (error) {
         console.error("Failed to fetch inspection data:", error)

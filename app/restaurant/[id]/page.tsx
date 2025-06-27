@@ -29,7 +29,7 @@ import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { ThemeToggle } from "@/components/theme-toggle"
 import  LeafletMap  from "@/components/map/leaflet-map"
-import { useAuth } from "@clerk/nextjs"
+import { useUser } from "@clerk/nextjs"
 
 // Mock data for a restaurant
 const restaurantData = {
@@ -156,7 +156,7 @@ const restaurantData = {
 
 export default function RestaurantPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user } = useUser()
   const [isSaved, setIsSaved] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [authView, setAuthView] = useState<"login" | "register">("login")
@@ -1077,7 +1077,7 @@ export default function RestaurantPage({ params }: { params: { id: string } }) {
       </footer>
 
       {/* Auth Modal */}
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultView={authView} />
+      
     </div>
   )
 }

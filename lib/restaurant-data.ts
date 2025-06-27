@@ -22,7 +22,7 @@ export type Restaurant = {
     count: number
   }
   features: string[]
-  image_urls: string[]
+  images: string[]
   latitude?: string // Added for map functionality
   longitude?: string // Added for map functionality
   distance?: number // Added dynamically based on search location

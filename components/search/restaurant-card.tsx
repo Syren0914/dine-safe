@@ -5,22 +5,23 @@ import { Star, MapPin } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { type Restaurant, getPriceRangeSymbol, getHealthGradeColorClass } from "@/lib/restaurant-data"
 import { useEffect, useState } from "react"
+import type { InspectionData } from "@/types/inspection"
 
 interface RestaurantCardProps {
   restaurant: Restaurant
 }
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
-  const [inspection, setInspection] = useState<any>(null)
+  const [inspection, setInspection] = useState<InspectionData | null>(null)
   
 
   useEffect(() => {
     const fetchInspection = async () => {
       try {
-        const res = await fetch("/api/inspections")
-        const data = await res.json()
+        const res = await fetch(`/api/inspections?restaurantName=${encodeURIComponent(restaurant.name)}`)
+        const data: InspectionData[] = await res.json()
 
-        const matched = data.find((r: any) =>
+        const matched = data.find((r: InspectionData) =>
           r["Restaurant Name"]?.toLowerCase().includes(restaurant.name.toLowerCase())
         )
 
@@ -41,12 +42,16 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
     <Link href={`/restaurant/${restaurant.id}`} className="block">
       <div className="group overflow-hidden rounded-lg border bg-card text-card-foreground transition-all hover:shadow-md">
         <div className="relative aspect-[3/2] w-full overflow-hidden">
-        <Image
-          src={"/placeholder.svg"}
-          alt={name}
-          fill
-          className="object-cover transition-transform group-hover:scale-105"
-        />
+          {restaurant.images?.map((img, idx) => (
+            <Image
+              key={idx}
+              src={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=ATKogpdbp90vC1lbmzo_aF9wtYwJpoPAU0fbh37zeBXRinJl27ZBvZeR1-KlMK6jjZ3QHMmxIxvwaDeZP3iqJ-EQeokBtIkUUuw602g2iFK45v4OKs9jw25otFnvxYmvo0YO1ZNa1TpmYuxhTQMnUf-1tsFpqk62pYH3pUVqFzgRxtqSj8gYNS__GI7dV3_JR1F-8we8AC3nRGdW4trFwEJLDqrpAsdQJLDqgOv6IayYWzrcooZczrE3r8sY9GgmDEACzgFV86gJ0xcdBmp35TqXyJKP8K6o0QxMCAWGTbfdMLx0KzYaPA4BmTMeqGmXuxlDzYwgt4FYRVk&key=AIzaSyBcIDk3_FcrH6wEaYpGaLMRuW5GjV2ogkM`}
+              alt={`${name} image ${idx + 1}`}
+              width={100}
+              height={100}
+              className="object-cover"
+            />
+          ))}
 
           <div className="absolute right-2 top-2">
             <div

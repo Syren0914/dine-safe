@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "import-sample-data": "node scripts/import-sample-data.js"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.20.2",
