@@ -56,11 +56,11 @@ export default function Home() {
   return (
     <div className=" min-h-screen ">      
       <HeroHeader />
-      <SplashCursor/>
+      {/* <SplashCursor/> */}
 
       <HeroSection/>
       <Features/>
-      <Testimonials.Testimonials/>
+      <Testimonials/>
       <Footer/>
     </div>
   )

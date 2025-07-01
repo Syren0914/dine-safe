@@ -1,6 +1,10 @@
 "use client"
-import { TestimonialsColumn } from "./testimonials";
+
+
 import { motion } from "motion/react";
+import { TestimonialsColumn } from "./TestimonialsColumn";
+
+
 
 const testimonials = [
   {
@@ -99,4 +103,4 @@ const Testimonials = () => {
   );
 };
 
-export default { Testimonials };
+export default Testimonials;

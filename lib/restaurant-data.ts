@@ -22,7 +22,16 @@ export type Restaurant = {
     count: number
   }
   features: string[]
-  images: string[]
+  images?: {
+    url: string
+    width?: number
+    height?: number
+    attributions?: string[]
+  }[]
+  
+  
+  
+  
   latitude?: string // Added for map functionality
   longitude?: string // Added for map functionality
   distance?: number // Added dynamically based on search location
@@ -51,7 +60,7 @@ export const restaurants: Restaurant[] = [
       count: 127,
     },
     features: ["Outdoor Seating", "Vegetarian Options", "Full Bar"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2296",
     longitude: "-80.4139",
   },
@@ -77,7 +86,7 @@ export const restaurants: Restaurant[] = [
       count: 89,
     },
     features: ["Takeout", "Delivery", "Late Night"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2270",
     longitude: "-80.4220",
   },
@@ -103,7 +112,7 @@ export const restaurants: Restaurant[] = [
       count: 156,
     },
     features: ["Reservations", "Vegetarian Options", "Gluten-Free Options"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2310",
     longitude: "-80.4170",
   },
@@ -129,7 +138,7 @@ export const restaurants: Restaurant[] = [
       count: 78,
     },
     features: ["Takeout", "Delivery", "Kid-Friendly"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2350",
     longitude: "-80.4100",
   },
@@ -155,7 +164,7 @@ export const restaurants: Restaurant[] = [
       count: 203,
     },
     features: ["Takeout", "Delivery", "Late Night", "Beer and Wine"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2290",
     longitude: "-80.4160",
   },
@@ -181,7 +190,7 @@ export const restaurants: Restaurant[] = [
       count: 112,
     },
     features: ["Vegetarian Options", "Vegan Options", "Gluten-Free Options", "Organic"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2240",
     longitude: "-80.4190",
   },
@@ -207,7 +216,7 @@ export const restaurants: Restaurant[] = [
       count: 95,
     },
     features: ["Takeout", "Delivery", "Vegetarian Options"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2300",
     longitude: "-80.4150",
   },
@@ -233,7 +242,7 @@ export const restaurants: Restaurant[] = [
       count: 167,
     },
     features: ["Reservations", "Full Bar", "Private Dining"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2380",
     longitude: "-80.4230",
   },
@@ -259,7 +268,7 @@ export const restaurants: Restaurant[] = [
       count: 142,
     },
     features: ["Breakfast", "Brunch", "Kid-Friendly", "Vegetarian Options"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2295",
     longitude: "-80.4145",
   },
@@ -285,7 +294,7 @@ export const restaurants: Restaurant[] = [
       count: 86,
     },
     features: ["Takeout", "Delivery", "Vegetarian Options", "Halal"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2330",
     longitude: "-80.4080",
   },
@@ -311,7 +320,7 @@ export const restaurants: Restaurant[] = [
       count: 103,
     },
     features: ["Takeout", "Delivery", "Vegetarian Options"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2320",
     longitude: "-80.4260",
   },
@@ -337,7 +346,7 @@ export const restaurants: Restaurant[] = [
       count: 67,
     },
     features: ["Takeout", "Drive-Thru", "Late Night"],
-    image_urls: ["/placeholder.svg?height=200&width=300"],
+    image: ["/placeholder.svg?height=200&width=300"],
     latitude: "37.2260",
     longitude: "-80.4180",
   },
@@ -465,3 +474,5 @@ export function getUniqueFeatures(restaurants: Restaurant[]): string[] {
   const allFeatures = restaurants.flatMap((restaurant) => restaurant.features)
   return [...new Set(allFeatures)].sort()
 }
+
+export default Testimonials;

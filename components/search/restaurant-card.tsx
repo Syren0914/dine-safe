@@ -11,10 +11,13 @@ interface RestaurantCardProps {
   restaurant: Restaurant
 }
 
+
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const [inspection, setInspection] = useState<InspectionData | null>(null)
   
-
+  const imageList = restaurant.images?.length
+  ? restaurant.images.map(i => i.url)
+  : ["/fallback.jpg"] // Local fallback image in /public folder
   useEffect(() => {
     const fetchInspection = async () => {
       try {
@@ -42,16 +45,21 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
     <Link href={`/restaurant/${restaurant.id}`} className="block">
       <div className="group overflow-hidden rounded-lg border bg-card text-card-foreground transition-all hover:shadow-md">
         <div className="relative aspect-[3/2] w-full overflow-hidden">
-          {restaurant.images?.map((img, idx) => (
-            <Image
-              key={idx}
-              src={`https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=ATKogpdbp90vC1lbmzo_aF9wtYwJpoPAU0fbh37zeBXRinJl27ZBvZeR1-KlMK6jjZ3QHMmxIxvwaDeZP3iqJ-EQeokBtIkUUuw602g2iFK45v4OKs9jw25otFnvxYmvo0YO1ZNa1TpmYuxhTQMnUf-1tsFpqk62pYH3pUVqFzgRxtqSj8gYNS__GI7dV3_JR1F-8we8AC3nRGdW4trFwEJLDqrpAsdQJLDqgOv6IayYWzrcooZczrE3r8sY9GgmDEACzgFV86gJ0xcdBmp35TqXyJKP8K6o0QxMCAWGTbfdMLx0KzYaPA4BmTMeqGmXuxlDzYwgt4FYRVk&key=AIzaSyBcIDk3_FcrH6wEaYpGaLMRuW5GjV2ogkM`}
-              alt={`${name} image ${idx + 1}`}
-              width={100}
-              height={100}
-              className="object-cover"
-            />
-          ))}
+        {imageList.map((url, idx) => (
+  <div key={idx} className="relative w-full h-[200px]">
+    <Image
+      src={url}
+      alt={`${name} image ${idx + 1}`}
+      fill
+      sizes="(max-width: 768px) 100vw, 33vw"
+      className="object-cover"
+      onError={(e) => {
+        const target = e.target as HTMLImageElement
+        target.src = "/fallback.jpg"
+      }}
+    />
+  </div>
+))}
 
           <div className="absolute right-2 top-2">
             <div
