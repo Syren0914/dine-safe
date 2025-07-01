@@ -48,7 +48,7 @@ const HeroHeader = () => {
                               href="/"
                               aria-label="home"
                               className="flex items-center space-x-2">
-                              <Logo /> DineSafe
+                              <Logo /> CrAIve
                           </Link>
 
                           <button

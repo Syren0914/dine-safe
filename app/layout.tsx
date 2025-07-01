@@ -10,8 +10,8 @@ import { ExpandableChatDemo } from '@/components/chat/chat'
 
 
 export const metadata: Metadata = {
-  title: 'DineSafe',
-  description: 'Welcome to DineSafe, your trusted partner in food safety and compliance.',
+  title: 'CrAIve',
+  description: 'Welcome to CrAIve, your trusted partner in food safety and compliance.',
 }
 
 export default function RootLayout({

@@ -97,9 +97,9 @@ export default function SearchPage() {
             </Button>
             <div className="flex items-center gap-2 font-semibold">
               <div className="h-10 w-10 rounded-md  flex items-center justify-center text-white">
-                <Image src={"/dineSafe.png"} alt={""} width={100} height={100}></Image>
+                <Image src={"/CrAIve.png"} alt={""} width={100} height={100}></Image>
               </div>
-              <span className="hidden md:inline">DineSafe</span>
+              <span className="hidden md:inline">CrAIve</span>
             </div>
           </div>
 

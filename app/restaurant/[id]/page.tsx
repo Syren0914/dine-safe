@@ -248,9 +248,9 @@ export default function RestaurantPage({ params }: { params: { id: string } }) {
             </Button>
             <div className="flex items-center gap-2 font-semibold">
               <div className="h-10 w-10 rounded-md  flex items-center justify-center text-white">
-                <Image src={"/dineSafe.png"} alt={""} width={100} height={100}></Image>
+                <Image src={"/CrAIve.png"} alt={""} width={100} height={100}></Image>
               </div>
-              <span className="hidden md:inline">DineSafe</span>
+              <span className="hidden md:inline">CrAIve</span>
             </div>
           </div>
 
@@ -1046,12 +1046,12 @@ export default function RestaurantPage({ params }: { params: { id: string } }) {
         <div className="container flex flex-col items-center justify-center gap-4 px-4 md:flex-row md:justify-between md:px-6">
           <div className="flex items-center gap-2 font-semibold">
             <div className="h-8 w-8 rounded-md  flex items-center justify-center text-white text-xs">
-              <Image src={"/dineSafe.png"} alt={""} width={100} height={100}></Image>
+              <Image src={"/CrAIve.png"} alt={""} width={100} height={100}></Image>
             </div>
-            <span>DineSafe</span>
+            <span>CrAIve</span>
           </div>
           <p className="text-center text-sm text-muted-foreground md:text-left">
-            © 2023 DineSafe. All rights reserved.
+            © 2023 CrAIve. All rights reserved.
           </p>
           <div className="flex gap-4">
             <Link

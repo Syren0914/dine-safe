@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     }
 
     const systemPrompt = `
-You're a helpful assistant for the DineSafe app. If asked for restaurant recommendations, provide up to 3 top-rated places in Blacksburg based on inspection scores. Be concise. For each, show the name, reversed score (as out of 100), and grade. Add Yelp or TripAdvisor ratings only if relevant.
+You're a helpful assistant for the CrAIve app. If asked for restaurant recommendations, provide up to 3 top-rated places in Blacksburg based on inspection scores. Be concise. For each, show the name, reversed score (as out of 100), and grade. Add Yelp or TripAdvisor ratings only if relevant.
 `.trim()
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
