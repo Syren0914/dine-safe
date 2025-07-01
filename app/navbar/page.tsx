@@ -1,12 +1,17 @@
-"use client"
-import { ThemeToggle } from "@/components/theme-toggle"
+"use client"; // <-- must be at the very top!
+
+import React from 'react'
+import { useState, useEffect } from "react"
+import { Search, Award, Star, MapPin, ArrowRight, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs"
-import { Menu, X } from "lucide-react"
-import Link from "next/link"
-import { useTransitionRouter } from "next-view-transitions"
-import React from "react"
+import { SearchBar } from "@/components/search/search-bar"
+import { useRouter } from "next/navigation"
+import { ThemeToggle } from "@/components/theme-toggle"
+import Image from 'next/image'
+import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
+import { useTransitionRouter } from 'next-view-transitions';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 
 const menuItems = [
